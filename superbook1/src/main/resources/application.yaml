@@ -1,7 +1,8 @@
+
 spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5431/java
+    url: jdbc:postgresql://localhost:5432/superBookDB
     username: postgres
     password: 1234
 
@@ -9,3 +10,5 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+server:
+  port: 8088
