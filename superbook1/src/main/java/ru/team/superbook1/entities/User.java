@@ -1,6 +1,8 @@
 package ru.team.superbook1.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +15,17 @@ import java.util.UUID;
 @Getter
 @Setter
 public class User {
+
+    public User(UUID id, String email, String password, UserRole role) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User() {
+
+    }
 
     public static enum UserRole {
         ADMIN, USER;
@@ -42,6 +55,7 @@ public class User {
 
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "form",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -49,5 +63,9 @@ public class User {
     )
     private List<Book> books;
 
+
+    public void addBook(Book book){
+        books.add(book);
+    }
 
 }

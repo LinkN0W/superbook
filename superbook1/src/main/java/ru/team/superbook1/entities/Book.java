@@ -1,5 +1,6 @@
 package ru.team.superbook1.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,7 @@ public class Book {
     @Column(name = "amount_copies")
     private int amount;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "books")
     private List<User> users;
 
