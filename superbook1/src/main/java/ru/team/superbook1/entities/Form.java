@@ -2,12 +2,10 @@ package ru.team.superbook1.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -16,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Form {
+public class Form{
 
 
     @Id
@@ -34,12 +32,15 @@ public class Form {
     @Column(name = "date_of_taking")
     private Date dateOfTaking;
 
-
     @Column(name = "date_of_returning")
     private Date dateOfReturning;
 
     @Column(name = "penalties")
     private int penalties;
+
+    @Column(name = "delay")
+    private int delay;
+
 
     public Form(UUID userId, UUID bookId, Date now, Date date, int penalties) {
         this.userId = userId;
@@ -48,4 +49,5 @@ public class Form {
         this.penalties = penalties;
 
     }
+
 }

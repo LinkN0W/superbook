@@ -35,5 +35,7 @@ public class Book {
     @ManyToMany(mappedBy = "books")
     private List<User> users;
 
+    @Column(name = "delete")
+    private Boolean delete;
 
 }

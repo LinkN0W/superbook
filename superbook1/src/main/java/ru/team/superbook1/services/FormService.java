@@ -21,8 +21,8 @@ public class FormService {
     @Autowired
     FormRepository formRepository;
 
-    public Optional<Form> addBookToUser(Form form) {
-        User currentUser = userRepository.findById(UUID.fromString("3b28ebee-3eeb-47b4-9d60-235d0e27ac5a")).get();
+    public Optional<Form> addBookToUser(UUID userId,Form form) {
+        User currentUser = userRepository.findById(userId).get();
         form.setUserId(currentUser.getId());
         form.setDateOfTaking(new Date());
         form.setPenalties(0);
@@ -30,9 +30,21 @@ public class FormService {
         return formRepository.findById(form.getId());
     }
 
-    public Optional<Form> countUserPenalties(UUID userId) {
-        Date currentDate = new Date();
+    public Iterable<Form> countUserPenalties(UUID userId, Date date) {
         List<Form> forms = formRepository.findAllByUserId(userId);
-        return Optional.ofNullable(forms.get(1));
+        forms.stream().forEach(e -> {
+                    int difference = (int) ((e.getDateOfReturning().getTime() - date.getTime()) / 86400000);
+                    if(difference < 0){
+                        e.setDelay(Math.abs(difference));
+                        if(Math.abs(difference) > 30)
+                            e.setPenalties( 5*(Math.abs(difference)-30));
+                        formRepository.save(e);
+                    }
+                }
+        );
+
+        forms.stream().forEach(e -> System.out.println(e.getPenalties()));
+
+        return forms;
     }
 }

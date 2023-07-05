@@ -32,9 +32,9 @@ public class BookService {
         bookRepository.updateBookById(id, book.getAuthor(), book.getAmount()  ,book.getDescription(), book.getTitle());
         return findBookById(id);
     }
+
     public void delete(UUID id){
-        Optional<Book> deletedBook = bookRepository.findById(id);
-        bookRepository.deleteById(id);
+        bookRepository.delete(id,true);
     }
 
 

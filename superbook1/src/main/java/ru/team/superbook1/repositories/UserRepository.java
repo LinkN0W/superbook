@@ -26,5 +26,9 @@ public interface UserRepository extends CrudRepository<User, UUID> {
                         @Param("password") String password, @Param("role") String role);
 
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE User u set u.delete = :delete where u.id = :id")
+    void delete(@Param("id") UUID id,@Param("delete") Boolean is_delete);
 
 }

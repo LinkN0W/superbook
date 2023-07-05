@@ -39,8 +39,7 @@ public class UserService {
         return findUserById(id);
     }
     public void delete(UUID id){
-        Optional<User> deletedBook = userRepository.findById(id);
-        userRepository.deleteById(id);
+        userRepository.delete(id,true);
     }
 
-    }
+}

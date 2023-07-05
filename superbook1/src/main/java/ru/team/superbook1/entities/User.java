@@ -2,7 +2,6 @@ package ru.team.superbook1.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,7 @@ import java.util.UUID;
 @Table(name = "users")
 @Getter
 @Setter
-public class User {
+public class User{
 
     public User(UUID id, String email, String password, UserRole role) {
         this.id = id;
@@ -26,6 +25,9 @@ public class User {
     public User() {
 
     }
+
+
+
 
     public static enum UserRole {
         ADMIN, USER;
@@ -51,6 +53,9 @@ public class User {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.USER;
+
+    @Column(name = "delete")
+    private Boolean delete;
 
 
 
