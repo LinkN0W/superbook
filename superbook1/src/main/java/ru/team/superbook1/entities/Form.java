@@ -35,6 +35,9 @@ public class Form{
     @Column(name = "date_of_returning")
     private Date dateOfReturning;
 
+    @Column(name = "term_of_returning")
+    private Date termOfReturning;
+
     @Column(name = "penalties")
     private int penalties;
 
@@ -50,4 +53,8 @@ public class Form{
 
     }
 
+    public void setDateOfTaking(Date dateOfTaking) {
+        this.dateOfTaking = dateOfTaking;
+
+    }
 }

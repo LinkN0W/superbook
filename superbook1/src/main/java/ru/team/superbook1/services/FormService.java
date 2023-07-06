@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.team.superbook1.entities.Form;
 import ru.team.superbook1.entities.User;
+import ru.team.superbook1.functional.CountFunctional;
+import ru.team.superbook1.functional.FormFunctional;
 import ru.team.superbook1.repositories.FormRepository;
 import ru.team.superbook1.repositories.UserRepository;
 
@@ -21,6 +23,9 @@ public class FormService {
     @Autowired
     FormRepository formRepository;
 
+
+    CountFunctional countFunctional;
+
     public Optional<Form> addBookToUser(UUID userId,Form form) {
         User currentUser = userRepository.findById(userId).get();
         form.setUserId(currentUser.getId());
@@ -30,21 +35,14 @@ public class FormService {
         return formRepository.findById(form.getId());
     }
 
-    public Iterable<Form> countUserPenalties(UUID userId, Date date) {
+
+
+
+    public Iterable<Form> countPenalties(UUID userId, Date date){
         List<Form> forms = formRepository.findAllByUserId(userId);
-        forms.stream().forEach(e -> {
-                    int difference = (int) ((e.getDateOfReturning().getTime() - date.getTime()) / 86400000);
-                    if(difference < 0){
-                        e.setDelay(Math.abs(difference));
-                        if(Math.abs(difference) > 30)
-                            e.setPenalties( 5*(Math.abs(difference)-30));
-                        formRepository.save(e);
-                    }
-                }
-        );
-
-        forms.stream().forEach(e -> System.out.println(e.getPenalties()));
-
+        countFunctional = new FormFunctional();
+        forms =  countFunctional.countUserPenaltiesForOnce(forms, date);
+        forms.stream().forEach(e -> formRepository.save(e));
         return forms;
     }
 }
