@@ -54,20 +54,21 @@ public class ExcelExportService {
         this.bookRepository = bookRepository;
         this.wb = new XSSFWorkbook();
         this.sheet = wb.createSheet();
+
     }
 
 
     public String exportData(String name, Date dateOfBegin, Date dateOfEnd){
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet(name);
+
 
         List<Form> forms = (List<Form>) formRepository.findAllByDatePeriod(dateOfBegin, dateOfEnd);
 
         countFunctional = new FormFunctional();
         List<Form> newFrom = countFunctional.countUserPenaltiesForPeriod(forms,dateOfBegin, dateOfEnd);
 
+
+        int rowNum = 1;
         createTitle();
-        int rowNum = 0;
         for(Form form : newFrom) createRow(rowNum++,form);
         try {
             writeWorkbook();

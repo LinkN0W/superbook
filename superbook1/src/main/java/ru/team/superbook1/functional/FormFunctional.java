@@ -28,7 +28,6 @@ public class FormFunctional implements CountFunctional{
                     }
                 }
         );
-
         forms.stream().forEach(e -> System.out.println(e.getPenalties()));
 
         return forms;
@@ -37,42 +36,24 @@ public class FormFunctional implements CountFunctional{
     @Override
     public List<Form> countUserPenaltiesForPeriod(List<Form> forms, Date dateOfBegin, Date dateOfEnd) {
         forms.stream().forEach(e -> {
-                    int difference = 0;
-
-                    if( e.getDateOfTaking().getTime() < dateOfBegin.getTime()){
-                        if(e.getDateOfReturning() == null || e.getDateOfReturning().getTime() > dateOfEnd.getTime()){
-                            difference = (int) ((dateOfEnd.getTime() - dateOfBegin.getTime()) / 86400000);
-                            System.out.println(difference);
-                        }
-                        else{
-                            difference = (int) ((dateOfEnd.getTime() - e.getDateOfReturning().getTime()) / 86400000);
-                        }
+                    long difference = 0;
+                    if (e.getDateOfReturning() != null)
+                        difference = Math.min(dateOfEnd.getTime(), e.getDateOfReturning().getTime())
+                                - Math.max(dateOfBegin.getTime(), e.getTermOfReturning().getTime());
+                    else
+                        difference = dateOfEnd.getTime() - Math.max(dateOfBegin.getTime(), e.getTermOfReturning().getTime());
+                    if(difference >= 0){
+                        System.out.println(difference);
+                        e.setDelay((int) (difference/ 86400000)+1);
+                        e.setPenalties(e.getDelay()*5);
                     }
                     else{
-                        if(e.getDateOfReturning() == null || e.getDateOfReturning().getTime() > dateOfEnd.getTime()){
-                            difference = (int) ((dateOfEnd.getTime() - e.getDateOfTaking().getTime()) / 86400000);
-                        }
-                        else{
-                            difference = (int) ((e.getDateOfReturning().getTime() - e.getDateOfTaking().getTime()) / 86400000);
-                        }
+                        e.setDelay(0);
+                        e.setPenalties(0);
                     }
-                    difference +=1;
 
-                        if(difference < 30){
-                            e.setDelay(0);
-                            e.setPenalties(0);
-                        }
-                        else if(difference == 30){
-                            e.setDelay(Math.abs(difference) );
-                            e.setPenalties(5 * ((Math.abs(difference))));
-                        }
-                        else {
-                            e.setDelay(Math.abs(difference) - 30);
-                            e.setPenalties(5 * ((Math.abs(difference)) - 30));
-                        }
+        }
 
-
-                    }
 
 
         );
