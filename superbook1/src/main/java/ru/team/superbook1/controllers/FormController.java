@@ -27,14 +27,16 @@ public class FormController {
     private ExcelExportService excelExportService;
 
 
+
+
     @PostMapping("/add")
     public Optional<Form> addBookToUser(@RequestBody Form form){
         return formService.addBookToUser(UUID.fromString("3b28ebee-3eeb-47b4-9d60-235d0e27ac5a"),form);
     }
 
     @GetMapping("/count/{userId}")
-    public Iterable<Form> countPenalties(@PathVariable UUID userId ){
-        return formService.countPenalties(userId, new Date());
+    public Iterable<Form> countUserPenalties(@PathVariable UUID userId ){
+        return formService.countUserPenalties(userId, new Date());
     }
 
 
@@ -46,9 +48,20 @@ public class FormController {
         Integer month = Integer.valueOf(monthDateFormat.format(period.getDate()));
         Integer year = Integer.valueOf(yearDateFormat.format(period.getDate()));
 
+        LocalDate dateOfBegin = LocalDate.now();
+        LocalDate dateOfEnd = LocalDate.now();
 
-        LocalDate dateOfBegin = LocalDate.of(year,month,1);
-        LocalDate dateOfEnd = LocalDate.of(year,month, 30);
+        switch (period.getPeriod()){
+            case MONTH:
+                    dateOfBegin = LocalDate.of(year,month,1);
+                    dateOfEnd = LocalDate.of(year,month, 30);
+                    break;
+            case YEAR:
+                    dateOfBegin = LocalDate.of(year,1,1);
+                    dateOfEnd = LocalDate.of(year,12, 31);
+                    break;
+        }
+
 
         System.out.println(dateOfBegin);
         System.out.println(dateOfEnd);

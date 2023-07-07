@@ -43,7 +43,7 @@ public class ExcelExportService {
     private final XSSFSheet sheet;
 
     String[] nameColumns = {
-        "Почта пользователя","Название книги","Дата приобретения", "Дата возврата","Пени", "Дни просрочки"
+        "Почта пользователя","Название книги","Автор", "Описание", "Дата приобретения", "Дата возврата", "Фактическая дата возврата","Пени", "Дни просрочки"
     };
 
 
@@ -83,10 +83,13 @@ public class ExcelExportService {
         XSSFRow rowTitle = sheet.createRow(0);
         setCellValue(rowTitle.createCell(0), "Почта пользователя");
         setCellValue(rowTitle.createCell(1), "Название книги");
-        setCellValue(rowTitle.createCell(2), "Дата приобретения");
-        setCellValue(rowTitle.createCell(3), "Дата возврата");
-        setCellValue(rowTitle.createCell(4), "Пени");
-        setCellValue(rowTitle.createCell(5), "Дни просрочки");
+        setCellValue(rowTitle.createCell(2), "Автор");
+        setCellValue(rowTitle.createCell(3), "Описание");
+        setCellValue(rowTitle.createCell(4), "Дата приобретения");
+        setCellValue(rowTitle.createCell(5), "Дата возврата");
+        setCellValue(rowTitle.createCell(6), "Фактическая дата возврата");
+        setCellValue(rowTitle.createCell(7), "Пени");
+        setCellValue(rowTitle.createCell(8), "Дни просрочки");
     }
 
 
@@ -96,12 +99,15 @@ public class ExcelExportService {
         Book book = bookRepository.findById(form.getBookId()).get();
         setCellValue(row.createCell(0), user.getEmail());
         setCellValue(row.createCell(1), book.getTitle());
-        setCellValue(row.createCell(2), form.getDateOfTaking().toString());
+        setCellValue(row.createCell(2), book.getAuthor());
+        setCellValue(row.createCell(3), book.getDescription());
+        setCellValue(row.createCell(4), form.getDateOfTaking().toString());
+        setCellValue(row.createCell(5), form.getTermOfReturning().toString());
         if(form.getDateOfReturning() != null)
-            setCellValue(row.createCell(3), form.getDateOfReturning().toString());
-        else setCellValue(row.createCell(3), "");
-        setCellValue(row.createCell(4), form.getPenalties());
-        setCellValue(row.createCell(5), form.getDelay());
+            setCellValue(row.createCell(6), form.getDateOfReturning().toString());
+        else setCellValue(row.createCell(6), "");
+        setCellValue(row.createCell(7), form.getPenalties());
+        setCellValue(row.createCell(8), form.getDelay());
     }
 
 

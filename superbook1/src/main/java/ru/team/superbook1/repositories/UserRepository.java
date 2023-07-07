@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.team.superbook1.entities.Book;
 import ru.team.superbook1.entities.User;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +19,8 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
 
     Optional<User> findUserByEmail(String email);
+
+    Iterable<User> findUsersByDeleteIsFalse();
 
     @Transactional
     @Modifying

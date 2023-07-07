@@ -2,10 +2,12 @@ package ru.team.superbook1.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.team.superbook1.entities.Book;
 import ru.team.superbook1.entities.Form;
 import ru.team.superbook1.entities.User;
 import ru.team.superbook1.functional.CountFunctional;
 import ru.team.superbook1.functional.FormFunctional;
+import ru.team.superbook1.repositories.BookRepository;
 import ru.team.superbook1.repositories.FormRepository;
 import ru.team.superbook1.repositories.UserRepository;
 
@@ -18,28 +20,47 @@ import java.util.UUID;
 public class FormService {
 
     @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    FormRepository formRepository;
+    private final FormRepository formRepository;
+
+    @Autowired
+    private final BookRepository bookRepository;
 
 
-    CountFunctional countFunctional;
+    private CountFunctional countFunctional;
+
+    public FormService(UserRepository userRepository, FormRepository formRepository, BookRepository bookRepository) {
+        this.userRepository = userRepository;
+        this.formRepository = formRepository;
+        this.bookRepository = bookRepository;
+    }
 
     public Optional<Form> addBookToUser(UUID userId,Form form) {
-        User currentUser = userRepository.findById(userId).get();
-        form.setUserId(currentUser.getId());
-        form.setDateOfTaking(new Date());
-        form.setPenalties(0);
-        formRepository.save(form);
-        return formRepository.findById(form.getId());
+        Optional<User> currentUser = userRepository.findById(userId);
+        Optional<Book> addedBook = bookRepository.findById(form.getBookId());
+        if(currentUser.isPresent() && addedBook.isPresent()) {
+            form.setUserId(currentUser.get().getId());
+            form.setDateOfTaking(new Date());
+            form.setPenalties(0);
+            formRepository.save(form);
+            return formRepository.findById(form.getId());
+        }
+        else return Optional.empty();
     }
 
 
+    public Iterable<Form> countUserPenalties(UUID userId, Date date){
+        List<Form> forms = formRepository.findAllByUserIdAndDateOfReturningIsNull(userId);
+        countFunctional = new FormFunctional();
+        forms =  countFunctional.countUserPenaltiesForOnce(forms, date);
+        forms.stream().forEach(e -> formRepository.save(e));
+        return forms;
+    }
 
-
-    public Iterable<Form> countPenalties(UUID userId, Date date){
-        List<Form> forms = formRepository.findAllByUserId(userId);
+    public Iterable<Form> countAllPenalties(Date date){
+        List<Form> forms = formRepository.findAllByDateOfReturningIsNull();
         countFunctional = new FormFunctional();
         forms =  countFunctional.countUserPenaltiesForOnce(forms, date);
         forms.stream().forEach(e -> formRepository.save(e));

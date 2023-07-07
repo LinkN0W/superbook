@@ -17,6 +17,7 @@ public interface FormRepository extends CrudRepository<Form, UUID> {
     List<Form> findAllByUserId(UUID id);
 
     List<Form> findAllByUserIdAndDateOfReturningIsNull(UUID id);
+    List<Form> findAllByDateOfReturningIsNull();
 
 
     @Query("SELECT f FROM Form f where (f.dateOfReturning is NULL or f.dateOfReturning > :dateOfBegin) and f.dateOfTaking < :dateOfEnd")
