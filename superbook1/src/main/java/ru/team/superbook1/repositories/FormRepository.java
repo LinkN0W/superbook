@@ -9,6 +9,7 @@ import ru.team.superbook1.entities.User;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,6 +20,11 @@ public interface FormRepository extends CrudRepository<Form, UUID> {
     List<Form> findAllByUserIdAndDateOfReturningIsNull(UUID id);
     List<Form> findAllByDateOfReturningIsNull();
 
+
+    Optional<Form> findByUserIdAndBookId(UUID userId, UUID bookId);
+
+
+    void deleteByUserIdAndBookId(UUID userId, UUID bookId);
 
     @Query("SELECT f FROM Form f where (f.dateOfReturning is NULL or f.dateOfReturning > :dateOfBegin) and f.dateOfTaking < :dateOfEnd")
     List<Form> findAllByDatePeriod(@Param("dateOfBegin")Date dateOfBegin, @Param("dateOfEnd")Date dateOfEnd);

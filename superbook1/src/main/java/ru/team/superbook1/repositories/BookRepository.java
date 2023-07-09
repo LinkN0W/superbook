@@ -14,15 +14,23 @@ import java.util.UUID;
 @Repository
 public interface BookRepository extends CrudRepository<Book, UUID> {
 
-    @Transactional
+
     @Modifying
     @Query("UPDATE Book b set b.author = :author, b.amount = :amount,  b.description = :description, b.title = :title where b.id = :id")
     void updateBookById(@Param("id") UUID id,@Param("author") String author, @Param("amount") Integer amount,
                                   @Param("description") String description, @Param("title") String title);
 
+    @Modifying
+    @Query("UPDATE Book b set b.amount = b.amount + 1 where b.id = :id")
+    void updateBookByIdPlusOneFromAmount(@Param("id") UUID id);
 
+    @Modifying
+    @Query("UPDATE Book b set b.amount = b.amount - 1 where b.id = :id")
+    void updateBookByIdMinusOneFromAmount(@Param("id") UUID id);
 
-    @Transactional
+    @Query("SELECT Book from Book b where b.id = :id and b.amount <> 0")
+    Optional<Book> findByIdAndAmountIsNotNull(@Param("id") UUID id);
+
     @Modifying
     @Query("UPDATE Book b set b.delete = :delete where b.id = :id")
     void delete(@Param("id") UUID id,@Param("delete") Boolean is_delete);

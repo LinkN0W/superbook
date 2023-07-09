@@ -43,14 +43,15 @@ public class EmailService {
 
     }
 
-    @Scheduled(fixedRate = 30000)
+   @Scheduled(fixedRate = 30000)
     public void sendDataAboutUser(){
+        boolean isDuty;
        for(User user : userRepository.findUsersByDeleteIsFalse()){
            StringBuffer message = new StringBuffer("Ваша задолжность\n");
            for(Form form : formService.countUserPenalties(user.getId(), new Date())){
                Book book = bookRepository.findById(form.getBookId()).get();
                message.append(book.getTitle())
-                       .append("Взята ").append(form.getDateOfTaking())
+                       .append(" Взята ").append(form.getDateOfTaking())
                        .append(", Срок сдачи ").append(form.getTermOfReturning())
                        .append(", Количество просроченных дней ").append(form.getDelay())
                        .append(", Пени ").append(form.getPenalties()).append("\n");

@@ -22,14 +22,14 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     Iterable<User> findUsersByDeleteIsFalse();
 
-    @Transactional
+
     @Modifying
     @Query("UPDATE User u set u.email = :email, u.password = :password,  u.role = :role where u.id = :id")
     void updateUserById(@Param("id") UUID id, @Param("email") String email,
                         @Param("password") String password, @Param("role") String role);
 
 
-    @Transactional
+
     @Modifying
     @Query("UPDATE User u set u.delete = :delete where u.id = :id")
     void delete(@Param("id") UUID id,@Param("delete") Boolean is_delete);

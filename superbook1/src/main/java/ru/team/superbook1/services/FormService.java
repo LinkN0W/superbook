@@ -39,15 +39,22 @@ public class FormService {
 
     public Optional<Form> addBookToUser(UUID userId,Form form) {
         Optional<User> currentUser = userRepository.findById(userId);
-        Optional<Book> addedBook = bookRepository.findById(form.getBookId());
+        Optional<Book> addedBook = bookRepository.findByIdAndAmountIsNotNull(form.getBookId());
+
         if(currentUser.isPresent() && addedBook.isPresent()) {
             form.setUserId(currentUser.get().getId());
             form.setDateOfTaking(new Date());
             form.setPenalties(0);
             formRepository.save(form);
+            bookRepository.updateBookByIdMinusOneFromAmount(form.getBookId());
             return formRepository.findById(form.getId());
         }
         else return Optional.empty();
+    }
+
+    public void deleteForm(UUID userId, UUID bookId){
+        formRepository.deleteByUserIdAndBookId(userId, bookId);
+        bookRepository.updateBookByIdPlusOneFromAmount(bookId);
     }
 
 

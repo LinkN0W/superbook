@@ -27,8 +27,6 @@ public class User{
     }
 
 
-
-
     public static enum UserRole {
         ADMIN, USER;
         public static User.UserRole getById(String id){
@@ -56,6 +54,7 @@ public class User{
 
     @Column(name = "delete")
     private Boolean delete;
+
 
 
 

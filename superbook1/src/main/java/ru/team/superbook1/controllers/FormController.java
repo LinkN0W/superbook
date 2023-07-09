@@ -72,6 +72,11 @@ public class FormController {
     }
 
 
+    @DeleteMapping("/delete/{userId}/{bbokId}")
+    void deleteForm(@PathVariable("userId") UUID userId, @PathVariable("bookId") UUID bookId){
+        formService.deleteForm(userId, bookId);
+
+    }
 
 
 
