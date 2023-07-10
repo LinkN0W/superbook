@@ -1,4 +1,4 @@
-package ru.team.superbook1.message.response;
+package ru.team.superbook1.security.message.responses;
 
 public class ResponseMessage {
     private String message;

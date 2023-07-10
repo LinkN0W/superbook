@@ -1,17 +1,19 @@
 package ru.team.superbook1.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.team.superbook1.dto.PeriodDateDTO;
 import ru.team.superbook1.entities.Form;
 import ru.team.superbook1.export.ExcelExportService;
 import ru.team.superbook1.services.FormService;
+import ru.team.superbook1.services.UserService;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,14 +26,29 @@ public class FormController {
     private FormService formService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     private ExcelExportService excelExportService;
 
 
+    @Autowired
+    private final AuthenticationManager authenticationManager;
+
+    public FormController(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
 
     @PostMapping("/add")
     public Optional<Form> addBookToUser(@RequestBody Form form){
-        return formService.addBookToUser(UUID.fromString("3b28ebee-3eeb-47b4-9d60-235d0e27ac5a"),form);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return formService.addBookToUser(userService.getUserByEmail(auth.getName()).getId(),form);
+    }
+    @GetMapping("/showBook")
+    public Iterable<Form> showUserForm(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return formService.showUserForm(userService.getUserByEmail(auth.getName()).getId());
     }
 
     @GetMapping("/count/{userId}")
@@ -72,12 +89,12 @@ public class FormController {
     }
 
 
-    @DeleteMapping("/delete/{userId}/{bbokId}")
+    /*@DeleteMapping("/delete/{userId}/{bbokId}")
     void deleteForm(@PathVariable("userId") UUID userId, @PathVariable("bookId") UUID bookId){
         formService.deleteForm(userId, bookId);
 
     }
-
+*/
 
 
 }

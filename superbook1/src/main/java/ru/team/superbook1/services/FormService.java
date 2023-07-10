@@ -39,24 +39,23 @@ public class FormService {
 
     public Optional<Form> addBookToUser(UUID userId,Form form) {
         Optional<User> currentUser = userRepository.findById(userId);
-        Optional<Book> addedBook = bookRepository.findByIdAndAmountIsNotNull(form.getBookId());
+        //Book addedBook = bookRepository.findByIdAndDeleteIsFalse(form.getBookId());
 
-        if(currentUser.isPresent() && addedBook.isPresent()) {
+        if(currentUser.isPresent() && bookRepository.findByIdAndDeleteIsFalse(form.getBookId()).isPresent()) {
             form.setUserId(currentUser.get().getId());
             form.setDateOfTaking(new Date());
             form.setPenalties(0);
             formRepository.save(form);
-            bookRepository.updateBookByIdMinusOneFromAmount(form.getBookId());
             return formRepository.findById(form.getId());
         }
         else return Optional.empty();
     }
 
-    public void deleteForm(UUID userId, UUID bookId){
+    /*public void deleteForm(UUID userId, UUID bookId){
         formRepository.deleteByUserIdAndBookId(userId, bookId);
-        bookRepository.updateBookByIdPlusOneFromAmount(bookId);
+        //bookRepository.updateBookByIdPlusOneFromAmount(bookId);
     }
-
+*/
 
     public Iterable<Form> countUserPenalties(UUID userId, Date date){
         List<Form> forms = formRepository.findAllByUserIdAndDateOfReturningIsNull(userId);
@@ -72,5 +71,9 @@ public class FormService {
         forms =  countFunctional.countUserPenaltiesForOnce(forms, date);
         forms.stream().forEach(e -> formRepository.save(e));
         return forms;
+    }
+
+    public Iterable<Form> showUserForm(UUID userId){
+        return formRepository.findAllByUserIdAndDateOfReturningIsNull(userId);
     }
 }

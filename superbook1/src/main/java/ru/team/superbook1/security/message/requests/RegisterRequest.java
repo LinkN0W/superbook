@@ -1,4 +1,4 @@
-package ru.team.superbook1.message.request;
+package ru.team.superbook1.security.message.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,10 @@ import lombok.Setter;
 @Setter
 public class RegisterRequest {
 
+    private String name;
+
     private String email;
+    private String role;
 
     private String password;
-
 }

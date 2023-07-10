@@ -43,7 +43,7 @@ public class EmailService {
 
     }
 
-   @Scheduled(fixedRate = 30000)
+   //@Scheduled(fixedRate = 30000)
     public void sendDataAboutUser(){
         boolean isDuty;
        for(User user : userRepository.findUsersByDeleteIsFalse()){

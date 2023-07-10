@@ -1,17 +1,14 @@
 package ru.team.superbook1.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.team.superbook1.dto.UserDTO;
-import ru.team.superbook1.entities.Book;
 import ru.team.superbook1.entities.User;
-import ru.team.superbook1.message.request.RegisterRequest;
-import ru.team.superbook1.message.response.ResponseMessage;
+
 import ru.team.superbook1.services.UserService;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,21 +17,18 @@ import java.util.UUID;
 public class UserController {
 
     @Autowired
-    UserService userService;
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
-        if (!this.userService.canRegister(request.getEmail()))
-            return new ResponseEntity<>(new ResponseMessage("Email is already in use"),
-                    HttpStatus.BAD_REQUEST);
+    private final UserService userService;
 
-        User user = new User(UUID.randomUUID(),
-                request.getEmail(),
-                request.getPassword(),
-                User.UserRole.USER);
-        userService.save(user);
-
-        return new ResponseEntity<>(new ResponseMessage("User registration is successful"), HttpStatus.OK);
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
+    
+    @GetMapping("/myInfo")
+    public User showInfoCurrentUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return userService.getUserByEmail(auth.getName());
+    }
+
 
     @GetMapping("/show/{userId}")
     public Optional<UserDTO> show(@PathVariable UUID userId){

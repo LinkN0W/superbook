@@ -28,12 +28,12 @@ public class User{
 
 
     public static enum UserRole {
-        ADMIN, USER;
+        ROLE_ADMIN, ROLE_USER;
         public static User.UserRole getById(String id){
             for(User.UserRole e : values()) {
                 if(e.name().equalsIgnoreCase(id)) return e;
             }
-            return USER;
+            return ROLE_USER;
         }
     }
     @Id
@@ -45,12 +45,14 @@ public class User{
     @Column(name = "email")
     private String email;
 
+    @Column(name = "name")
+    private String name;
 
     private String password;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.USER;
+    private UserRole role = UserRole.ROLE_USER;
 
     @Column(name = "delete")
     private Boolean delete;
