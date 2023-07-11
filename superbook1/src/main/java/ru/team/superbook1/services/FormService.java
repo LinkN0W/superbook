@@ -58,7 +58,8 @@ public class FormService {
 */
 
     public Iterable<Form> countUserPenalties(UUID userId, Date date){
-        List<Form> forms = formRepository.findAllByUserIdAndDateOfReturningIsNull(userId);
+        List<Form> forms = formRepository.findAllByUserIdAndDateOfReturningIsNull(userId)
+                .stream().filter(e -> date.getTime() > e.getTermOfReturning().getTime() ).toList();
         countFunctional = new FormFunctional();
         forms =  countFunctional.countUserPenaltiesForOnce(forms, date);
         forms.stream().forEach(e -> formRepository.save(e));

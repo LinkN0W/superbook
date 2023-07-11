@@ -37,6 +37,8 @@ public interface BookRepository extends CrudRepository<Book, UUID> {
 
     Optional<Book> findByIdAndDeleteIsFalse(UUID uuid);
 
+
+
     @Modifying
     @Transactional
     @Query("UPDATE Book b set b.delete = :delete where b.id = :id")

@@ -22,6 +22,8 @@ public interface UserRepository extends CrudRepository<User, UUID> {
 
     Iterable<User> findUsersByDeleteIsFalse();
 
+    Optional<User> findByIdAndDeleteIsFalse(UUID id);
+
 
     Optional<User> findUserByName(String name);
 

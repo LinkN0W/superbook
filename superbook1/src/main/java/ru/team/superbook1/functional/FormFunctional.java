@@ -28,7 +28,6 @@ public class FormFunctional implements CountFunctional{
                     }
                 }
         );
-        forms.stream().forEach(e -> System.out.println(e.getPenalties()));
 
         return forms;
     }

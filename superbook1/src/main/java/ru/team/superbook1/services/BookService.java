@@ -28,6 +28,11 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
+
+    public Optional<Book> findByIdAndDeleteIsFalse(UUID uuid){
+        return bookRepository.findByIdAndDeleteIsFalse(uuid);
+    }
+
     public Optional<Book> update(UUID id, Book book){
         bookRepository.updateBookById(id, book.getAuthor(), book.getAmount()  ,book.getDescription(), book.getTitle());
         return findBookById(id);

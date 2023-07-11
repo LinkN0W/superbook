@@ -2,7 +2,6 @@ package ru.team.superbook1.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.team.superbook1.entities.Book;
 import ru.team.superbook1.entities.User;
 import ru.team.superbook1.repositories.UserRepository;
 
@@ -28,6 +27,9 @@ public class UserService {
         return userRepository.findUserByEmail(email).get();
     }
 
+    public Optional<User> findByIdAndDeleteIsFalse(UUID uuid){
+        return userRepository.findByIdAndDeleteIsFalse(uuid);
+    }
 
 
     public void save(User user){

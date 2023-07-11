@@ -15,7 +15,9 @@ import ru.team.superbook1.repositories.FormRepository;
 import ru.team.superbook1.repositories.UserRepository;
 import ru.team.superbook1.services.FormService;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 @Service
 @EnableScheduling
@@ -43,16 +45,17 @@ public class EmailService {
 
     }
 
-   //@Scheduled(fixedRate = 30000)
+   @Scheduled(fixedRate = 30000)
     public void sendDataAboutUser(){
         boolean isDuty;
+        SimpleDateFormat normalDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
        for(User user : userRepository.findUsersByDeleteIsFalse()){
            StringBuffer message = new StringBuffer("Ваша задолжность\n");
            for(Form form : formService.countUserPenalties(user.getId(), new Date())){
                Book book = bookRepository.findById(form.getBookId()).get();
                message.append(book.getTitle())
-                       .append(" Взята ").append(form.getDateOfTaking())
-                       .append(", Срок сдачи ").append(form.getTermOfReturning())
+                       .append(" Взята ").append(normalDateFormat.format(form.getDateOfTaking()))
+                       .append(", Срок сдачи ").append(normalDateFormat.format(form.getTermOfReturning()))
                        .append(", Количество просроченных дней ").append(form.getDelay())
                        .append(", Пени ").append(form.getPenalties()).append("\n");
            }

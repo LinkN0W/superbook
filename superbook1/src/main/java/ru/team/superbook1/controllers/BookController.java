@@ -1,11 +1,19 @@
 package ru.team.superbook1.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.team.superbook1.archive.ArchiveService;
+import ru.team.superbook1.archive.DeletedBooks;
+import ru.team.superbook1.archive.DeletedEntities;
 import ru.team.superbook1.entities.Book;
-import ru.team.superbook1.entities.User;
 import ru.team.superbook1.services.BookService;
+import ru.team.superbook1.services.UserService;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,7 +22,19 @@ import java.util.UUID;
 public class BookController {
 
     @Autowired
-    BookService bookService;
+    private final BookService bookService;
+
+    @Autowired
+    private final ArchiveService archiveService;
+
+    @Autowired
+    private UserService userService;
+
+    public BookController(BookService bookService, ArchiveService archiveService) {
+        this.bookService = bookService;
+        this.archiveService = archiveService;
+    }
+
     @GetMapping
     public Iterable<Book> showAll(){
         return bookService.findAll();
@@ -37,9 +57,19 @@ public class BookController {
     }
 
     @DeleteMapping("/delete/{bookId}")
-    public String delete(@PathVariable UUID bookId){
-        bookService.delete(bookId);
-        return "OK";
+    public ResponseEntity<?> delete(@PathVariable UUID bookId){
+        try {
+
+            Book book = bookService.findByIdAndDeleteIsFalse(bookId).get();
+            bookService.delete(book.getId());
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            DeletedBooks deletedBook = new DeletedBooks(userService.getUserByEmail(auth.getName()).getId(), new Date(), book);
+            archiveService.addToArchive(deletedBook);
+            return new ResponseEntity<>(deletedBook, HttpStatus.OK);
+        } catch (Exception e){
+           return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+       }
+
     }
 
 

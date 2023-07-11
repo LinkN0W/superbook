@@ -1,14 +1,21 @@
 package ru.team.superbook1.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.team.superbook1.archive.ArchiveService;
+import ru.team.superbook1.archive.DeletedBooks;
+import ru.team.superbook1.archive.DeletedUsers;
 import ru.team.superbook1.dto.UserDTO;
+import ru.team.superbook1.entities.Book;
 import ru.team.superbook1.entities.User;
 
 import ru.team.superbook1.services.UserService;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,10 +26,14 @@ public class UserController {
     @Autowired
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    @Autowired
+    private final ArchiveService archiveService;
+
+    public UserController(UserService userService, ArchiveService archiveService) {
         this.userService = userService;
+        this.archiveService = archiveService;
     }
-    
+
     @GetMapping("/myInfo")
     public User showInfoCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -42,9 +53,19 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{userId}")
-    public String delete(@PathVariable UUID userId){
-        userService.delete(userId);
-        return "OK";
+    public ResponseEntity<?> delete(@PathVariable UUID userId){
+        try {
+
+            User user = userService.findByIdAndDeleteIsFalse(userId).get();
+            userService.delete(user.getId());
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            DeletedUsers deletedUser = new DeletedUsers(userService.getUserByEmail(auth.getName()).getId(), new Date(), user);
+            archiveService.addToArchive(deletedUser);
+            return new ResponseEntity<>(deletedUser, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 }
